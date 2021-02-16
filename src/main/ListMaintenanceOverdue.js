@@ -50,7 +50,7 @@ export default function ListMaintenanceOverdue(props) {
                 {/* {renderPagination()} */}
                 <button disabled={currentPage > 0 ? false : true} onClick={() => { pagingHandle(currentPage - 1) }} className="btn btn-primary mx-2">Pre</button>
                 <button className="btn btn-primary mx-2">{currentPage}</button>
-                <button disabled={currentPage < totalPages - 1 ? false : true} onClick={() => { pagingHandle(currentPage + 1) }} className="btn btn-primary mx-2">Next</button>
+                <button disabled={currentPage < totalPages - 1 ? false : true} onClick={() => { pagingHandle(currentPage + 1) }} className="btn btn-primary mx-2">Nex</button>
             </div>
         </div >
     )

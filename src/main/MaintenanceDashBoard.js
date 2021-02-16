@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import ListMaintenanceOverdue from './ListMaintenanceOverdue'
+import MapMaintenanceOverdue from './MapMaintenanceOverdue';
 
 export default function MaintenanceDashBoard() {
 
@@ -63,7 +64,7 @@ export default function MaintenanceDashBoard() {
                         currentPage={currentPage} />
                 </div>
                 <div className="col-md-6">
-
+                    <MapMaintenanceOverdue list={listMaintenOverdue} />
                 </div>
             </div>
         </div>
