@@ -2,9 +2,82 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios';
 import ListMaintenanceOverdue from './ListMaintenanceOverdue'
 import MapMaintenanceOverdue from './MapMaintenanceOverdue';
+import PastMaintenanceChart from './PastMaintenanceChart';
 
 export default function MaintenanceDashBoard() {
+    //--------------component chart-------------
+    let overdueInfoDefault = [];
+    const maxMonth = 4; //number of month present on the chart(Jan->Apr)
+    for (let i = 0; i < maxMonth; i++) {
+        overdueInfoDefault.push(0);
+    }
+    const [overdueInfo, setOverdueInfo] = useState(overdueInfoDefault);
+    useEffect(() => {
+        const fectOverdueInfo = async () => {
+            try {
+                const res = await axios({
+                    url: 'http://localhost:8080/api/overdueasset/listAssetOverdue',
+                    method: "GET"
+                })
+                let { data } = res;
+                for (let i = 0; i < maxMonth; i++) {
+                    let check = 0;
+                    for (const item of data) {
+                        if ((i + 1) === item.month) {
+                            overdueInfoDefault[i] = item.num_Overdue;
+                            check = 1;
+                            break;
+                        }
+                    }
+                    if (!check) {
+                        overdueInfoDefault[i] = 0;
+                    }
+                }
+                setOverdueInfo(overdueInfoDefault);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fectOverdueInfo();
+    }, [])
 
+    let intimeInfoDefault = [];
+    for (let i = 0; i < maxMonth; i++) {
+        overdueInfoDefault.push(0);
+    }
+    const [intimeInfo, setIntimeInfo] = useState(intimeInfoDefault);
+    useEffect(() => {
+        const fectIntimeInfo = async () => {
+            try {
+                const res = await axios({
+                    url: 'http://localhost:8080/api/intimeasset/listAssetIntime',
+                    method: "GET"
+                })
+                let { data } = res;
+                for (let i = 0; i < maxMonth; i++) {
+                    let check = 0;
+                    for (const item of data) {
+                        if ((i + 1) === item.month) {
+                            intimeInfoDefault[i] = item.num_Intime;
+                            check = 1;
+                            break;
+                        }
+                    }
+                    if (!check) {
+                        intimeInfoDefault[i] = 0;
+                    }
+                }
+                setIntimeInfo(intimeInfoDefault);
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        fectIntimeInfo();
+    }, [])
+
+
+    //--------------component listOverdueAsset and mapOverdueAsset--------------
+    //Shoud init default value for state to avoid error because have to wait the response from server
     const [listMaintenOverdue, setListMaintenOverdue] = useState([])
     const [paginatiion, setPagination] = useState({ pagesize: 5, totalRows: 20 })
     const [currentPage, setCurrentPage] = useState(0);
@@ -35,8 +108,6 @@ export default function MaintenanceDashBoard() {
                     }
                 }
                 setListMaintenOverdue(main_list);
-                // console.log(main_list);
-
 
             } catch (err) {
                 console.log(err);
@@ -50,13 +121,13 @@ export default function MaintenanceDashBoard() {
     }
 
     return (
-        <div className="container">
+        <div className="container py-5">
             <div className="row">
                 <div className="col-md-6">
 
                 </div>
                 <div className="col-md-6">
-
+                    <PastMaintenanceChart overdueInfo={overdueInfo} intimeInfo={intimeInfo} />
                 </div>
                 <div className="col-md-6">
                     <ListMaintenanceOverdue list={listMaintenOverdue} paginatiion={paginatiion}
