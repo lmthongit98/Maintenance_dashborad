@@ -3,8 +3,43 @@ import axios from 'axios';
 import ListMaintenanceOverdue from './ListMaintenanceOverdue'
 import MapMaintenanceOverdue from './MapMaintenanceOverdue';
 import PastMaintenanceChart from './PastMaintenanceChart';
+import AssetWithNoMaintenanceDue from './AssetWithNoMaintenanceDue';
+import AssetMaintenanceIsDue from './AssetMaintenanceIsDue';
 
 export default function MaintenanceDashBoard() {
+    //####Note: setState is asyn function!!!!
+    //------------component 1, 2--------------
+    const [assetStatus, setAssetStatus] = useState([
+        {
+            "status": 0,
+            "num_Count": 0
+        },
+        {
+            "status": 1,
+            "num_Count": 0
+        },
+        {
+            "status": 2,
+            "num_Count": 0
+        }
+    ]);
+    useEffect(() => {
+        const fectchAssetStatus = async () => {
+            try {
+                const res = await axios({
+                    url: 'http://localhost:8080/api/maintenance/countassetstatus',
+                    method: "GET"
+                })
+                setAssetStatus(res.data);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        fectchAssetStatus();
+    }, [])
+
+
+
     //--------------component chart-------------
     let overdueInfoDefault = [];
     const maxMonth = 4; //number of month present on the chart(Jan->Apr)
@@ -124,7 +159,14 @@ export default function MaintenanceDashBoard() {
         <div className="container py-5">
             <div className="row">
                 <div className="col-md-6">
-
+                    <div className="row">
+                        <div className="col">
+                            <AssetWithNoMaintenanceDue assetStatus={assetStatus} />
+                        </div>
+                        <div className="col">
+                            <AssetMaintenanceIsDue assetStatus={assetStatus} />
+                        </div>
+                    </div>
                 </div>
                 <div className="col-md-6">
                     <PastMaintenanceChart overdueInfo={overdueInfo} intimeInfo={intimeInfo} />
